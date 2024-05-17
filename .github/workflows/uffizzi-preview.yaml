@@ -20,6 +20,7 @@ jobs:
         uses: docker/metadata-action@v4
         with:
           images: jfu888/dockerjs
+          tags: type=raw,value=24h
       - name: Build and Push Image to Uffizzi Ephemeral Registry
         uses: docker/build-push-action@v3
         with:
