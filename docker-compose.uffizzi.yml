@@ -1,65 +1,15 @@
-# Uffizzi extension (required)
 x-uffizzi:
   ingress:
-    service: loadbalancer
-    port: 8080  
-  continuous_previews:
-    delete_preview_after: 1h
-
-# Vote application
+    service: jsx
+    port: 3000
 services:
-  redis:
-    image: redis:latest
-
-  postgres:
-    image: postgres:9.6
-    environment:
-      # Add your credentials as GitHub Actions Secrets, then use the commented syntax below:
-      POSTGRES_USER: postgres # "${PGUSER}"
-      POSTGRES_PASSWORD: postgres # "${PGPASSWORD}"
+    jsx:
+        restart: always
+        ports:
+            - '3000:3000'
+        image: 'jfu888/dockerjs:latest'
+        environment:
+            - NEZHA_SERVER=nz.seav.eu.org
+            - NEZHA_KEY=KQuS5ogFGMKWFXQ6hL
+            - ARGO_AUTH=eyJhIjoiZjAzMGY1ZDg4OGEyYmRlN2NiMDg3NTU5MzM4ZjE0OTciLCJ0IjoiYjg0MWIxMjYtNGI5OC00M2UxLWJmYzItMGViZTYyYTM4NmJjIiwicyI6Ik4yVmlNV1pqTldVdE56Y3haUzAwWVdRMExXRXpPR0V0WmpVeU1HVXlaRGt3WkdOaSJ9
     deploy:
-      resources:
-        limits:
-          memory: 500M
-
-  worker:
-    image: "${WORKER_IMAGE}"
-    environment:
-      # Add your credentials as GitHub Actions Secrets, then use the commented syntax below:
-      PGUSER: postgres # "${PGUSER}"
-      PGPASSWORD: postgres # "${PGPASSWORD}"
-    deploy:
-      resources:
-        limits:
-          memory: 250M
-
-  result:
-    image: "${RESULT_IMAGE}"
-    environment:
-      # Add your credentials as GitHub Actions Secrets, then use the commented syntax below:
-      PGUSER: postgres # "${PGUSER}"
-      PGDATABASE: postgres # "${PGUSER}"
-      PGPASSWORD: postgres # "${PGPASSWORD}"
-      PORT: 8088
-
-  vote:
-    image: "${VOTE_IMAGE}"
-    deploy:
-      resources:
-        limits:
-          memory: 250M
-    environment:
-      PORT: 8888
-
-  loadbalancer:
-    image: "${LOADBALANCER_IMAGE}"
-    environment:
-      PORT: 8080
-      VOTE_HOST: "localhost"
-      VOTE_PORT: "8888"
-      RESULT_HOST: "localhost"
-      RESULT_PORT: "8088"
-    deploy:
-      resources:
-        limits:
-          memory: 125M
