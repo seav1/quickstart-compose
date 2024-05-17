@@ -1,7 +1,6 @@
 name: Build Images and Deploy Preview Environment
 
 on:
-  workflow_dispatch:
   pull_request:
     types: [opened,reopened,synchronize,closed]
 
@@ -15,11 +14,15 @@ jobs:
     steps:
       - name: Checkout git repo
         uses: actions/checkout@v3
+      - name: Generate UUID image name
+        id: uuid
+        run: echo "UUID_VOTE=$(uuidgen)" >> $GITHUB_ENV
       - name: Docker metadata
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: jfu888/dockerjs
+          # An anonymous, emphemeral registry built on ttl.sh
+          images: registry.uffizzi.com/${{ env.UUID_VOTE }}
           tags: type=raw,value=24h
       - name: Build and Push Image to Uffizzi Ephemeral Registry
         uses: docker/build-push-action@v3
@@ -27,6 +30,7 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
+          context: ./vote
 
   deploy-uffizzi-preview:
     name: Use Remote Workflow to Preview on Uffizzi
