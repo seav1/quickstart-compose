@@ -25,6 +25,8 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
 
   deploy-uffizzi-preview:
     name: Use Remote Workflow to Preview on Uffizzi
