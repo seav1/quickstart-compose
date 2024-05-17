@@ -1,6 +1,7 @@
 name: Build Images and Deploy Preview Environment
 
 on:
+  workflow_dispatch:
   pull_request:
     types: [opened,reopened,synchronize,closed]
 
